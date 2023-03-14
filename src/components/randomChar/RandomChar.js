@@ -41,7 +41,8 @@ class RandomChar extends Component {
 
     updateChar = () => {
         this.setState({
-            loading: true
+            loading: true,
+            error: false
         });
 
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
@@ -60,7 +61,7 @@ class RandomChar extends Component {
         const {char, loading, error} = this.state;
         const errorMessage = error ? <ErrorMessage/> : null;
         const spiner = loading ? <Spinner/> : null;
-        const content = !(spiner || error) ? <ViweChar char={char}/> : null;
+        const content = !(spiner || error) ? <ViewChar char={char}/> : null;
 
         return (
             <div className="randomchar">
@@ -87,7 +88,7 @@ class RandomChar extends Component {
 
 }
 
-const ViweChar = ({char}) =>{
+const ViewChar = ({char}) =>{
     const {name, description, thumbnail, homepage, wiki} = char;
     
     let imgStyle = null;
