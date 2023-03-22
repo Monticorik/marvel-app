@@ -1,4 +1,5 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types'
 import MarvelServices from '../../services/MarvelServices';
 import Spinner from '../spiner/Spiner';
 import ErrorMessage from '../error/ErrorMessage';
@@ -8,7 +9,7 @@ import './charList.scss';
 
 class CharList extends Component {
     constructor(props){
-        super(props)
+        super(props);
         this.state = {
             charList: [],
             loading: true,
@@ -16,13 +17,18 @@ class CharList extends Component {
             newItemLoading: false,
             offset: 210,
             charEnded: false,
-        }
+        };
+        this.charRef = React.createRef();
     }
     
     marvelServices = new MarvelServices();
 
     componentDidMount(){
         this.onRequaest();
+
+        if(this.charRef.current !== null){
+            
+        }
     }
 
     onRequaest = (offset) => {
@@ -61,6 +67,16 @@ class CharList extends Component {
         });
     }
 
+    highlightChar = e => {
+        if(this.charRef.current !== null){
+            this.charRef.classList.remove('char__item_selected');
+        }
+
+        this.charRef = e.currentTarget;
+        this.charRef.classList.add('char__item_selected');
+        this.charRef.onfocus = 0;
+    }
+
     viewCharList = (charList) => {
         const characters = charList.map(({name, thumbnail, id}) => {
             let imgStyle = null;
@@ -69,7 +85,17 @@ class CharList extends Component {
             }
             return (<li className="char__item"
                         key={id} 
-                        onClick={() => this.props.onCharUpdate(id)}>
+                        tabIndex = "0"
+                        onFocus={this.highlightChar}
+                        onClick={(e) => {
+                            this.props.onCharUpdate(id);
+                            this.highlightChar(e);
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === ' ' || e.key === "Enter") {
+                                this.props.onCharUpdate(id);
+                            }
+                        }}>
                         <img src={thumbnail} alt={name} style={imgStyle}/>
                         <div className="char__name">{name}</div>
                     </li>)
@@ -111,6 +137,10 @@ class CharList extends Component {
             </div>
         )
     }
+}
+
+CharList.propTypes = {
+    onCharUpdate: PropTypes.func,
 }
 
 
