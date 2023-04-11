@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MarvelServices from '../../services/MarvelServices';
+import useMarvelServices from '../../services/MarvelServices';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../error/ErrorMessage';
 
@@ -7,11 +7,12 @@ import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 const RandomChar = (props) => {
+
     const [char, setChar] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState(false);
     
-    const marvelServices = new MarvelServices();
+    const {loading, error, getCharacter, clearError} = useMarvelServices();
 
     const onCharLoaded = (newChar) => {
         if(newChar.description.length > 200){
@@ -20,27 +21,15 @@ const RandomChar = (props) => {
             newChar.description = 'This character currently has no description';
         }
 
-        console.log(newChar)
-
-        setChar(char => char = {...newChar});
-        setLoading(false);
+        setChar({...newChar});
     } 
 
-    const onError = () => {
-        setLoading(false);
-        setError(true);
-    }
-
     const updateChar = () => {
-        setLoading(true);
-        setError(false);
-
+        clearError();
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
 
-        marvelServices
-            .getCharacter(id)
-            .then(res => onCharLoaded(res))
-            .catch(onError);
+        getCharacter(id)
+            .then(res => onCharLoaded(res));
     }
 
     useEffect(() => {

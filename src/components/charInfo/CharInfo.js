@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import PropTypes from 'prop-types'
-import MarvelServices from '../../services/MarvelServices';
+import useMarvelServices from '../../services/MarvelServices';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../error/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
@@ -9,40 +9,26 @@ import './charInfo.scss';
 
 const CharInfo = (props) => {
     const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false)
 
-    const marvelServices = new MarvelServices();
+    const {loading, error, getCharacter, clearError} = useMarvelServices();
 
     const onCharLoaded = (newChar) => {
+        clearError();
+
         if(newChar.description.length > 200){
             newChar.description = newChar.description.slice(0, 200) + '...';
         } else if(newChar.description.length === 0){
             newChar.description = 'This character currently has no description';
         }
 
-        setChar(char => char = {...newChar});
-        setLoading(false);
+        setChar({...newChar});
     } 
-
-    const onLoading = () => {
-        setLoading(true);
-        setError(false);
-    }
-
-    const onError = () => {
-        setLoading(false);
-        setError(true);
-    }
 
     const updateChar = (id) => {
         if(!id) return;
 
-        onLoading();
-        marvelServices
-            .getCharacter(id)
-            .then(onCharLoaded)
-            .catch(onError);
+        getCharacter(id)
+            .then(onCharLoaded);
     }
 
     useEffect(() => {
