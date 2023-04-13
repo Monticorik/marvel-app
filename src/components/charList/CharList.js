@@ -37,7 +37,6 @@ const CharList = (props) => {
     const focusOnItem = (id) => {
         itemRefs.current.forEach(item => item.classList.remove('char__item_selected'));
         itemRefs.current[id].classList.add('char__item_selected');
-        console.dir(itemRefs.current[id])
         itemRefs.current[id].focus();
     }
 
@@ -79,9 +78,6 @@ const CharList = (props) => {
             </ul>
         )
     }
-
-
-    // const {charList, loading, error, offset, newItemLoading, charEnded} = this.state;
     
     const items = renderItems(charList);
 
